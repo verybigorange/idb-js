@@ -4,13 +4,16 @@
   "description": "Simple use of indexdb",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"parcel  --port 3000 index.html",
+    "build":"parcel build index.js"
   },
   "author": "zc",
   "license": "ISC",
   "devDependencies": {
     "ansi-styles": "^3.2.1",
     "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0"
+    "babel-preset-env": "^1.7.0",
+    "parcel-bundler": "^1.10.3"
   }
 }
