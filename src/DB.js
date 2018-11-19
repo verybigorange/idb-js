@@ -1,4 +1,5 @@
-import Dep from './uitils/Dep.js';
+import Dep from "./uitils/Dep.js";
+import Error from "./uitils/Error";
 
 const _dep_ = new Dep();
 
@@ -7,10 +8,19 @@ class DB {
     this.dbName = dbName;
     this.version = version;
     this.db = null;
+    this.idb = null;
+    this.table = [];
+    this._status = false; // 是否先添加了表
   }
 
   // 打开数据库
   open() {
+    // 打开前要先添加表
+    if (this.table.length == 0 && !this._status) {
+      new Error("打开前要先用add_table添加表")
+      return;
+    }
+
     const request = window.indexedDB.open(this.dbName, this.version);
 
     request.onerror = e => {
@@ -24,6 +34,11 @@ class DB {
     };
 
     request.onupgradeneeded = e => {
+      this.idb = e.target.result;
+
+      for (let i = 0; i < this.table.length; i++) {
+        this._create_table_(this.idb, this.table[i]);
+      }
       console.log("DB version changed to " + this.version);
     };
   }
@@ -48,6 +63,45 @@ class DB {
   delete_dB() {
     indexedDB.deleteDatabase(name);
   }
+
+  // 添加表
+  add_table(tableName, option = {}) {
+    this._status = false;
+    this.table.push({
+      tableName,
+      option
+    });
+  }
+
+  // 增添数据
+  // The mode default value is readonly.other readwrite
+  insert({tableName,data,mode="readonly"}){
+    if(Object.prototype.toString.call(data) !== '[object Object]'){
+      new Error("insert方法中的data必须是Object类型");
+      return
+    }
+
+    const action = ()=>{
+      const transaction=this.db.transaction(tableName,mode); 
+      const store=transaction.objectStore(tableName); 
+      store.add(data)
+    }
+
+    // 如果db不存在，加入依赖
+    if(!this.db){
+      _dep_.add(action)
+    }else{
+      action()
+    }
+   
+  }
+
+  // 创建table
+  _create_table_(idb, { tableName, option }) {
+    if (!idb.objectStoreNames.contains(tableName)) {
+      idb.createObjectStore(tableName, option);
+    }
+  }
 }
 
-export default DB
+export default DB;
