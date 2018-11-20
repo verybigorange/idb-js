@@ -51,16 +51,15 @@ class DB {
 
   //  关闭数据库
   close_db() {
-    if (this.db) {
+    const handler = () => {
       this.db.close();
-    } else {
-      // 如果没有db添加进依赖
-      _dep_.add(this.close_db);
-    }
+    };
+
+    this._action_(handler);
   }
 
   // 删除数据库
-  delete_dB() {
+  delete_db() {
     indexedDB.deleteDatabase(name);
   }
 
@@ -79,11 +78,11 @@ class DB {
    *
    * */
   query({ tableName, value, success = () => {}, mode = "readwrite" }) {
-    const handleFn = () => {
+    const handler = () => {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
       const request = store.get(value);
-      request.onsuccess = (e) => {
+      request.onsuccess = e => {
         const result = e.target.result;
         if (typeof success !== "function") {
           new Error("success必须是一个Function类型");
@@ -93,7 +92,7 @@ class DB {
       };
     };
 
-    this._action_(handleFn);
+    this._action_(handler);
   }
 
   // 增添数据
@@ -105,13 +104,13 @@ class DB {
 
     const mode = "readwrite";
 
-    const handleFn = () => {
+    const handler = () => {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
       store.add(data);
     };
 
-    this._action_(handleFn);
+    this._action_(handler);
   }
 
   // db是异步的,保证fn执行的时候db存在
