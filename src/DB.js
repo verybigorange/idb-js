@@ -17,7 +17,7 @@ class DB {
   open() {
     // 打开前要先添加表
     if (this.table.length == 0 && !this._status) {
-      new Error("打开前要先用add_table添加表")
+      new Error("打开前要先用add_table添加表");
       return;
     }
 
@@ -73,27 +73,58 @@ class DB {
     });
   }
 
+  /**
+   * 查询
+   * @value 主键值
+   *
+   * */
+  query({ tableName, value, success = () => {}, mode = "readwrite" }) {
+    const handleFn = () => {
+      const transaction = this.db.transaction(tableName, mode);
+      const store = transaction.objectStore(tableName);
+      const request = store.get(value);
+      request.onsuccess = (e) => {
+        const result = e.target.result;
+        if (typeof success !== "function") {
+          new Error("success必须是一个Function类型");
+          return;
+        }
+        success(result);
+      };
+    };
+
+    this._action_(handleFn);
+  }
+
   // 增添数据
-  // The mode default value is readonly.other readwrite
-  insert({tableName,data,mode="readonly"}){
-    if(Object.prototype.toString.call(data) !== '[object Object]'){
+  insert({ tableName, data }) {
+    if (Object.prototype.toString.call(data) !== "[object Object]") {
       new Error("insert方法中的data必须是Object类型");
-      return
+      return;
     }
 
-    const action = ()=>{
-      const transaction=this.db.transaction(tableName,mode); 
-      const store=transaction.objectStore(tableName); 
-      store.add(data)
-    }
+    const mode = "readwrite";
 
+    const handleFn = () => {
+      const transaction = this.db.transaction(tableName, mode);
+      const store = transaction.objectStore(tableName);
+      store.add(data);
+    };
+
+    this._action_(handleFn);
+  }
+
+  // db是异步的,保证fn执行的时候db存在
+  _action_(fn) {
+    const action = () => {
+      fn();
+    };
     // 如果db不存在，加入依赖
-    if(!this.db){
-      _dep_.add(action)
-    }else{
-      action()
+    if (!this.db) {
+      _dep_.add(action);
+    } else {
+      action();
     }
-   
   }
 
   // 创建table
