@@ -49,6 +49,17 @@ testDb.query({
     }
 })
 
+testDb.update({
+    tableName:'student',
+    value:113,
+    handle:(r)=>{
+        r.name = '马六'
+    },
+    success:(r)=>{
+        console.log('修改成功',r)
+    }
+})
+
 
 // var myDB={
 //     name:'test',

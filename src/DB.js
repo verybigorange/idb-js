@@ -113,6 +113,38 @@ class DB {
     this._action_(handler);
   }
 
+  /**
+   * 修改
+   * @value 主键值
+   * @handle 修改逻辑，会将值引用传出去进行修改
+   * @success 修改成功的回调，非必传
+   * */
+  update({ tableName, value , handle,success=()=>{}}) {
+    if(typeof handle !== 'function'){
+      new Error('update中handle必须是一个function类型')
+      return 
+    }
+
+    if(typeof success !== 'function'){
+      new Error('update中success必须是一个function类型')
+      return 
+    }
+
+    const handler = () => {
+      const transaction = this.db.transaction(tableName, "readwrite");
+      const store = transaction.objectStore(tableName);
+      const request = store.get(value);
+      request.onsuccess = e => {
+        const result = e.target.result;
+        handle(result)
+        store.put(result);
+        success(result)
+      };
+    };
+
+    this._action_(handler);
+  }
+
   // db是异步的,保证fn执行的时候db存在
   _action_(fn) {
     const action = () => {
