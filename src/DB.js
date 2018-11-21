@@ -95,8 +95,13 @@ class DB {
     this._action_(handler);
   }
 
-  // 增添数据
-  insert({ tableName, data }) {
+  /**
+   * 增
+   * @tableName 表名
+   * @data 插入的数据
+   * @success 删除成功的回调，非必传
+   * */
+  insert({ tableName, data, success }) {
     if (Object.prototype.toString.call(data) !== "[object Object]") {
       new Error("insert方法中的data必须是Object类型");
       return;
@@ -108,26 +113,42 @@ class DB {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
       store.add(data);
+      success();
     };
 
     this._action_(handler);
   }
 
   /**
-   * 修改
+   * 删
+   * @value 主键值
+   * @success 删除成功的回调，非必传
+   * */
+  delete({ tableName, value, success }) {
+    const handler = () => {
+      const transaction = this.db.transaction(tableName, "readwrite");
+      const store = transaction.objectStore(tableName);
+      store.delete(value);
+      success();
+    };
+    this._action_(handler);
+  }
+
+  /**
+   * 改
    * @value 主键值
    * @handle 修改逻辑，会将值引用传出去进行修改
    * @success 修改成功的回调，非必传
    * */
-  update({ tableName, value , handle,success=()=>{}}) {
-    if(typeof handle !== 'function'){
-      new Error('update中handle必须是一个function类型')
-      return 
+  update({ tableName, value, handle, success = () => {} }) {
+    if (typeof handle !== "function") {
+      new Error("update中handle必须是一个function类型");
+      return;
     }
 
-    if(typeof success !== 'function'){
-      new Error('update中success必须是一个function类型')
-      return 
+    if (typeof success !== "function") {
+      new Error("update中success必须是一个function类型");
+      return;
     }
 
     const handler = () => {
@@ -136,9 +157,9 @@ class DB {
       const request = store.get(value);
       request.onsuccess = e => {
         const result = e.target.result;
-        handle(result)
+        handle(result);
         store.put(result);
-        success(result)
+        success(result);
       };
     };
 

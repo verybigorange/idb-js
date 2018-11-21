@@ -60,7 +60,13 @@ testDb.update({
     }
 })
 
-
+testDb.delete({
+    tableName:'student',
+    value:111,
+    success:()=>{
+        console.log('删除成功')
+    }
+})
 // var myDB={
 //     name:'test',
 //     version:3,
