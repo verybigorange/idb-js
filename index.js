@@ -5,7 +5,11 @@ const testDb = new DB({
     version:8
 }) 
 testDb.add_table('student',{keyPath:'id'})
-testDb.open()
+testDb.open({
+    success:()=>{
+        console.log('打开数据库成功')
+    }
+})
 testDb.insert({
     tableName:'student',
     data:{

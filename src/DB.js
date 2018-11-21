@@ -13,24 +13,41 @@ class DB {
     this._status = false; // 是否先添加了表
   }
 
-  // 打开数据库
-  open() {
+  /**
+   * 打开数据库
+   * @success 成功的回调，返回db，非必传
+   * @error 失败的回调，返回错误信息，非必传
+   * */
+  open(ops) {
+    let success = () => {},
+      error = () => {};
+
+    if (ops) {
+      success = ops.success ? ops.success : success;
+      error = ops.error ? ops.error : error;
+    }
+
     // 打开前要先添加表
     if (this.table.length == 0 && !this._status) {
       new Error("打开前要先用add_table添加表");
       return;
     }
 
+    if (typeof success !== "function") {
+      new Error("open中success必须是一个function类型");
+      return;
+    }
+
     const request = window.indexedDB.open(this.dbName, this.version);
 
     request.onerror = e => {
-      this.open_db_error(e.currentTarget.error.message);
+      error(e.currentTarget.error.message);
     };
 
     request.onsuccess = e => {
       this.db = e.target.result;
+      success(this.db);
       _dep_.notify();
-      this.open_db_success();
     };
 
     request.onupgradeneeded = e => {
@@ -42,12 +59,6 @@ class DB {
       console.log("DB version changed to " + this.version);
     };
   }
-
-  // 数据打开失败
-  open_db_error(message) {}
-
-  // 数据库打开成功
-  open_db_success() {}
 
   //  关闭数据库
   close_db() {
@@ -75,19 +86,20 @@ class DB {
   /**
    * 查询
    * @value 主键值
-   *
+   * @success 查询成功，返回结果
    * */
   query({ tableName, value, success = () => {}, mode = "readwrite" }) {
+    if (typeof success !== "function") {
+      new Error("query方法中success必须是一个Function类型");
+      return;
+    }
+
     const handler = () => {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
       const request = store.get(value);
       request.onsuccess = e => {
         const result = e.target.result;
-        if (typeof success !== "function") {
-          new Error("success必须是一个Function类型");
-          return;
-        }
         success(result);
       };
     };
@@ -99,11 +111,16 @@ class DB {
    * 增
    * @tableName 表名
    * @data 插入的数据
-   * @success 删除成功的回调，非必传
+   * @success 插入成功的回调，非必传
    * */
-  insert({ tableName, data, success }) {
+  insert({ tableName, data, success = () => {} }) {
     if (Object.prototype.toString.call(data) !== "[object Object]") {
       new Error("insert方法中的data必须是Object类型");
+      return;
+    }
+
+    if (typeof success !== "function") {
+      new Error("insert方法中success必须是一个Function类型");
       return;
     }
 
@@ -124,7 +141,12 @@ class DB {
    * @value 主键值
    * @success 删除成功的回调，非必传
    * */
-  delete({ tableName, value, success }) {
+  delete({ tableName, value, success = () => {} }) {
+    if (typeof success !== "function") {
+      new Error("delete方法中success必须是一个Function类型");
+      return;
+    }
+
     const handler = () => {
       const transaction = this.db.transaction(tableName, "readwrite");
       const store = transaction.objectStore(tableName);
