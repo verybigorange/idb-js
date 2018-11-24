@@ -1,0 +1,1 @@
+export const NAME = 'indexdb_easy';

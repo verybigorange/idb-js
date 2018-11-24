@@ -1,5 +1,6 @@
 import Dep from "./uitils/Dep.js";
-import Error from "./uitils/Error";
+import {log_error} from "./uitils/log";
+import './compatible'
 
 const _dep_ = new Dep();
 
@@ -29,12 +30,12 @@ class DB {
 
     // 打开前要先添加表
     if (this.table.length == 0 && !this._status) {
-      new Error("打开前要先用add_table添加表");
+      log_error("打开前要先用add_table添加表");
       return;
     }
 
     if (typeof success !== "function") {
-      new Error("open中success必须是一个function类型");
+      log_error("open中success必须是一个function类型");
       return;
     }
 
@@ -56,7 +57,6 @@ class DB {
       for (let i = 0; i < this.table.length; i++) {
         this._create_table_(this.idb, this.table[i]);
       }
-      console.log("DB version changed to " + this.version);
     };
   }
 
@@ -74,30 +74,34 @@ class DB {
     indexedDB.deleteDatabase(name);
   }
 
-  // 添加表
-  add_table(tableName, option = {}) {
+  /**
+   * 添加一张表
+   * @param tableOption<Object>
+   * @tableName 表名
+   * @option 表配置
+   * @index 索引配置
+   * */
+  add_table(tableOption = {}) {
     this._status = false;
-    this.table.push({
-      tableName,
-      option
-    });
+    this.table.push(tableOption);
   }
 
   /**
    * 查询
-   * @value 主键值
+   * @value 主键值/如果建立了索引，可以用索引中的字段
    * @success 查询成功，返回结果
    * */
-  query({ tableName, value, success = () => {}, mode = "readwrite" }) {
+  query({ tableName, value,index, success = () => {}, mode = "readwrite" }) {
     if (typeof success !== "function") {
-      new Error("query方法中success必须是一个Function类型");
+      log_error("query方法中success必须是一个Function类型");
       return;
     }
 
     const handler = () => {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
-      const request = store.get(value);
+      // 容易index存在则根据索引查找，如果不存在则根据主键查找
+      const request = index?store.index(index).get(value):store.get(value);
       request.onsuccess = e => {
         const result = e.target.result;
         success(result);
@@ -115,12 +119,12 @@ class DB {
    * */
   insert({ tableName, data, success = () => {} }) {
     if (Object.prototype.toString.call(data) !== "[object Object]") {
-      new Error("insert方法中的data必须是Object类型");
+      log_error("insert方法中的data必须是Object类型");
       return;
     }
 
     if (typeof success !== "function") {
-      new Error("insert方法中success必须是一个Function类型");
+      log_error("insert方法中success必须是一个Function类型");
       return;
     }
 
@@ -143,7 +147,7 @@ class DB {
    * */
   delete({ tableName, value, success = () => {} }) {
     if (typeof success !== "function") {
-      new Error("delete方法中success必须是一个Function类型");
+      log_error("delete方法中success必须是一个Function类型");
       return;
     }
 
@@ -164,12 +168,12 @@ class DB {
    * */
   update({ tableName, value, handle, success = () => {} }) {
     if (typeof handle !== "function") {
-      new Error("update中handle必须是一个function类型");
+      log_error("update中handle必须是一个function类型");
       return;
     }
 
     if (typeof success !== "function") {
-      new Error("update中success必须是一个function类型");
+      log_error("update中success必须是一个function类型");
       return;
     }
 
@@ -201,11 +205,26 @@ class DB {
     }
   }
 
-  // 创建table
-  _create_table_(idb, { tableName, option }) {
+  /**
+   * 创建table
+   * @option<Object>  keyPath指定主键 autoIncrement是否自增
+   * @index 索引配置
+   * */
+  _create_table_(idb, { tableName, option,indexs = []}) {
     if (!idb.objectStoreNames.contains(tableName)) {
-      idb.createObjectStore(tableName, option);
+      let store = idb.createObjectStore(tableName, option);
+      for (let indexItem of indexs) {
+        this._create_index_(store, indexItem);
+      }
     }
+  }
+
+  /**
+   * 创建索引
+   * @option<Object> unique是否是唯一值
+   * */
+  _create_index_(store, { key, option }) {
+    store.createIndex(key, key, option);
   }
 }
 
