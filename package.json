@@ -1,6 +1,6 @@
 {
-  "name": "indexdb_easy",
-  "version": "1.0.0",
+  "name": "idb-js",
+  "version": "1.0.1",
   "description": "Simple to use indexdb",
   "main": "dist/Idb.js",
   "scripts": {
