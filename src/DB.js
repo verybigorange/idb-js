@@ -1,7 +1,6 @@
 import Dep from "./uitils/Dep.js";
 import {log_error} from "./uitils/log";
-import './compatible'
-
+import { indexedDB,IDBTransaction,IDBKeyRange} from './global'
 const _dep_ = new Dep();
 
 class DB {
@@ -39,7 +38,7 @@ class DB {
       return;
     }
 
-    const request = window.indexedDB.open(this.dbName, this.version);
+    const request = indexedDB.open(this.dbName, this.version);
 
     request.onerror = e => {
       error(e.currentTarget.error.message);

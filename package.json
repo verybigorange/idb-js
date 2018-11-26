@@ -5,15 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"parcel  --port 3000 example/index.html",
-    "build":"parcel build index.js"
+    "start": "parcel  --port 3000 example/index.html",
+    "build": "node build.js"
   },
   "author": "zc",
   "license": "ISC",
   "devDependencies": {
     "ansi-styles": "^3.2.1",
     "babel-core": "^6.26.3",
+    "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.7.0",
-    "parcel-bundler": "^1.10.3"
+    "chalk": "^2.4.1",
+    "parcel-bundler": "^1.10.3",
+    "rollup": "^0.67.3",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-uglify": "^6.0.0"
   }
 }
