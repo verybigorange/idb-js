@@ -17,6 +17,7 @@
     "babel-preset-env": "^1.7.0",
     "chalk": "^2.4.1",
     "parcel-bundler": "^1.10.3",
+    "rmrf": "^2.0.0",
     "rollup": "^0.67.3",
     "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-node-resolve": "^3.4.0",

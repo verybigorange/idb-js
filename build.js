@@ -3,6 +3,9 @@ const resolve = require('rollup-plugin-node-resolve');
 const babel = require('rollup-plugin-babel');
 const {uglify} = require('rollup-plugin-uglify');
 const chalk = require('chalk');
+const rmrf = require('rmrf');
+
+rmrf('dist/');
 
 // see below for details on the options
 const inputOptions = {
