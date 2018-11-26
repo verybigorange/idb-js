@@ -1,15 +1,33 @@
 {
   "name": "indexdb_easy",
   "version": "1.0.0",
-  "description": "Simple use of indexdb",
-  "main": "index.js",
+  "description": "Simple to use indexdb",
+  "main": "dist/Idb.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel  --port 3000 example/index.html",
-    "build": "node build.js"
+    "build": "node build.js",
+    "publish":"npm publish --access public"
   },
-  "author": "zc",
+  "files": [
+    "src",
+    "dist/*.js",
+    "example/**"
+  ],
+  "author": "zhoucheng",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/verybigorange/indexDB_easy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/verybigorange/indexDB_easy.git"
+  },
+  "keywords": [
+    "indexdb",
+    "database",
+    "indexDB"
+  ],
   "devDependencies": {
     "ansi-styles": "^3.2.1",
     "babel-core": "^6.26.3",
