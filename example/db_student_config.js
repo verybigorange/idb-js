@@ -8,7 +8,9 @@ export default {
       indexs: [
         {
           key: "id",
-          unique: true
+          option:{
+            unique: true
+          }
         },
         {
           key: "name"
@@ -24,7 +26,9 @@ export default {
       indexs: [
         {
           key: "id",
-          unique: true
+          option:{
+            unique: true
+          }
         },
         {
           key: "name"
