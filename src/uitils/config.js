@@ -1,1 +1,1 @@
-export const NAME = 'indexdb_easy';
+export const NAME = 'idb-js';
