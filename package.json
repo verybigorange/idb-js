@@ -1,6 +1,6 @@
 {
   "name": "idb-js",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Simple to use indexdb",
   "main": "dist/Idb.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "build": "node build.js",
     "publish":"npm publish --access public"
   },
+
   "files": [
     "src",
     "dist/*.js",

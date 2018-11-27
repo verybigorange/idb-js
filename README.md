@@ -1,4 +1,4 @@
-# indexDB_easy
+# idb-js
 基于indexdb本地数据库的封装
 
 ### _安装：_
