@@ -62,11 +62,19 @@ Idb(db_student_config).then(student_db => {
   });
 
   // 删除
-//   student_db.delete({
-//     tableName: "grade",
-//     value: 2,
-//     success: () => {
-//       console.log("删除成功");
-//     }
-//   });
+  student_db.delete({
+    tableName: "grade",
+    value: 2,
+    success: () => {
+      console.log("删除成功");
+    }
+  });
+
+  // 关闭该数据库
+  student_db.close_db();
+
+  // 删除该数据库
+  student_db.delete_db();
+},err => {
+  console.log(err)
 });

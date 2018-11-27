@@ -85,11 +85,14 @@ class DB {
     this.table.push(tableOption);
   }
 
-  /**
-   * 查询
-   * @value 主键值/如果建立了索引，可以用索引中的字段
-   * @success 查询成功，返回结果
-   * */
+   /**
+    * @method 查询
+    * @param {Object}
+    *   @property {String} tableName 表名
+    *   @property {String|Number} value 如果没有传index，则是以主键值查询，如果有index，根据index值查询
+    *   @property {String} index 要查询的索引名称
+    *   @property {Function} [success] 查询成功的回调，返回查到的结果
+    * */
   query({ tableName, value,index, success = () => {}, mode = "readwrite" }) {
     if (typeof success !== "function") {
       log_error("query方法中success必须是一个Function类型");
@@ -110,12 +113,13 @@ class DB {
     this._action_(handler);
   }
 
-  /**
-   * 增
-   * @tableName 表名
-   * @data 插入的数据
-   * @success 插入成功的回调，非必传
-   * */
+   /**
+    * @method 增
+    * @param {Object}
+    *   @property {String} tableName 表名
+    *   @property {Object} data 插入的数据
+    *   @property {Function} [success] 插入成功的回调
+    * */
   insert({ tableName, data, success = () => {} }) {
     if (Object.prototype.toString.call(data) !== "[object Object]") {
       log_error("insert方法中的data必须是Object类型");
@@ -139,11 +143,14 @@ class DB {
     this._action_(handler);
   }
 
-  /**
-   * 删
-   * @value 主键值
-   * @success 删除成功的回调，非必传
-   * */
+  
+    /**
+    * @method 删除数据
+    * @param {Object}
+    *   @property {String} tableName 表名
+    *   @property {String|Number} value 主键值
+    *   @property {Function} [success] 删除成功的回调
+    * */
   delete({ tableName, value, success = () => {} }) {
     if (typeof success !== "function") {
       log_error("delete方法中success必须是一个Function类型");
@@ -160,11 +167,13 @@ class DB {
   }
 
   /**
-   * 改
-   * @value 主键值
-   * @handle 修改逻辑，会将值引用传出去进行修改
-   * @success 修改成功的回调，非必传
-   * */
+  * @method 修改数据
+  * @param {Object}
+  *   @property {String} tableName 表名
+  *   @property {String|Number} value 待操作数据主键值
+  *   @property {Function} handle 处理函数，接收本条数据的引用，对其修改
+  *   @property {Function} [success] 修改成功的回调，返回修改成功的数据
+  * */
   update({ tableName, value, handle, success = () => {} }) {
     if (typeof handle !== "function") {
       log_error("update中handle必须是一个function类型");
