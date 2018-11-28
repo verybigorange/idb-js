@@ -6,9 +6,6 @@
     npm install idb-js --save
 ```
 
-索引：索引可以让你搜索任意字段拿到数据记录。如果不建立索引，默认只能搜索主键（即从主键取值），所以建议还是建立索引。
-
-
 ### _数据库配置：_
 ```
     // in db_student_config.js
@@ -106,8 +103,8 @@
         * @method 查询
         * @param {Object}
         *   @property {String} tableName 表名
-        *   @property {Function} condition 查询的条件
-        *      @arg {Object} 遍历每条数据，和filter类似
+        *   @property {Function} condition 查询的条件，遍历，与filter类似
+        *      @arg {Object} 每个元素
         *      @return 条件
         *   @property {Function} [success] @return {Array} 查询成功的回调，返回查到的结果
         * */
@@ -125,38 +122,46 @@
         * @method 修改数据
         * @param {Object}
         *   @property {String} tableName 表名
-        *   @property {String|Number} value 待操作数据主键值
+        *   @property {Function} condition 查询的条件，遍历，与filter类似
+        *      @arg {Object} 每个元素
+        *      @return 条件
         *   @property {Function} handle 处理函数，接收本条数据的引用，对其修改
-        *   @property {Function} [success] 修改成功的回调，返回修改成功的数据
+        *   @property {Function} [success] 修改成功的回调，返回修改成功的数据   @return {Array} 返回被修改后的值
+        *   @property {Function} [error] 错误函数 @return {String}
         * */
 
         student_db.update({
-            tableName: "info",
-            value: 1,
+            tableName: "grade",
+            condition:item => item.name == '小明',
             handle: r => {
-                r.age = 20;
+                r.score = 80;
             },
             success: r => {
                 console.log("修改成功", r);
-            }
+            },
+            error:msg=> console.log(msg)
         });
         
 
 
-        /**
+       /**
         * @method 删除数据
         * @param {Object}
         *   @property {String} tableName 表名
-        *   @property {String|Number} value 主键值
-        *   @property {Function} [success] 删除成功的回调
+        *   @property {Function} condition 查询的条件，遍历，与filter类似
+        *      @arg {Object} 每个元素
+        *      @return 条件
+        *   @property {Function} [success] 删除成功的回调  @return {Array} 返回被删除的值
+        *   @property {Function} [error] 错误函数 @return {String}
         * */
 
         student_db.delete({
-            tableName: "grade",
-            value: 2,
-            success: () => {
-                console.log("删除成功");
-            }
+          tableName: "grade",
+          condition: (item)=> item.name == '小明',
+          success: (res) => {
+            console.log("删除成功");
+          },
+          error：err => console.log(err)
         });
 
     },err => {

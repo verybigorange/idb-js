@@ -36,34 +36,35 @@ Idb(db_student_config).then(student_db => {
       sex: 1
     }
   });
-  setTimeout(()=>{
-     // 查
-    student_db.query({
-      tableName: "grade",
-      condition: (item)=> item.score == 100,
-      success: r => {
-        console.log(r);
-      }
-    });
-  },1000)
+  // setTimeout(()=>{
+  //    // 查
+  //   student_db.query({
+  //     tableName: "grade",
+  //     condition: (item)=> item.score == 100,
+  //     success: r => {
+  //       console.log(r);
+  //     }
+  //   });
+  // },1000)
  
 
   // 改
   student_db.update({
-    tableName: "info",
-    value: 1,
+    tableName: "grade",
+    condition:item => item == 100,
     handle: r => {
-      r.age = 20;
+      r.name = '我的name被修改了';
     },
     success: r => {
       console.log("修改成功", r);
-    }
+    },
+    error:msg=> console.log(msg)
   });
 
   // 删除
   // student_db.delete({
   //   tableName: "grade",
-  //   value: 2,
+  //   condition: (item)=> item.score == 100,
   //   success: () => {
   //     console.log("删除成功");
   //   }

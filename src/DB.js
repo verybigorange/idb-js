@@ -13,6 +13,8 @@ class DB {
     this._status = false; // 是否先添加了表
   }
 
+
+  
   /**
    * 打开数据库
    * @success 成功的回调，返回db，非必传
@@ -59,6 +61,8 @@ class DB {
     };
   }
 
+
+
   //  关闭数据库
   close_db() {
     const handler = () => {
@@ -68,10 +72,14 @@ class DB {
     this._action_(handler);
   }
 
+
+
   // 删除数据库
   delete_db() {
     indexedDB.deleteDatabase(name);
   }
+
+
 
   /**
    * 添加一张表
@@ -85,6 +93,8 @@ class DB {
     this.table.push(tableOption);
   }
 
+
+
   /**
    * @method 查询
    * @param {Object}
@@ -94,12 +104,7 @@ class DB {
    *      @return 条件
    *   @property {Function} [success] @return {Array} 查询成功的回调，返回查到的结果
    * */
-  query({
-    tableName,
-    condition,
-    success = () => {},
-    mode = "readwrite"
-  }) {
+  query({ tableName, condition, success = () => {}, mode = "readwrite" }) {
     if (typeof success !== "function") {
       log_error("query方法中success必须是一个Function类型");
       return;
@@ -108,7 +113,6 @@ class DB {
     const handler = () => {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
-      // 容易index存在则根据索引查找，如果不存在则根据主键查找
 
       if (typeof condition == "function") {
         // const i = store.index(index);
@@ -125,17 +129,14 @@ class DB {
           }
         };
       } else {
-        log_error("condition is required,and type is function")
-        // const request = store.get(value);
-        // request.onsuccess = e => {
-        //   const result = e.target.result;
-        //   success([result]);
-        // };
+        log_error("in query,condition is required,and type is function");
       }
     };
 
     this._action_(handler);
   }
+
+
 
   /**
    * @method 增
@@ -167,14 +168,19 @@ class DB {
     this._action_(handler);
   }
 
+
+
   /**
    * @method 删除数据
    * @param {Object}
    *   @property {String} tableName 表名
-   *   @property {String|Number} value 主键值
-   *   @property {Function} [success] 删除成功的回调
+   *   @property {Function} condition 查询的条件，遍历，与filter类似
+   *      @arg {Object} 每个元素
+   *      @return 条件
+   *   @property {Function} [success] 删除成功的回调  @return {Array} 返回被删除的值
+   *   @property {Function} [error] 错误函数 @return {String}
    * */
-  delete({ tableName, value, success = () => {} }) {
+  delete({ tableName, condition, success = () => {}, error = () => {} }) {
     if (typeof success !== "function") {
       log_error("delete方法中success必须是一个Function类型");
       return;
@@ -183,21 +189,55 @@ class DB {
     const handler = () => {
       const transaction = this.db.transaction(tableName, "readwrite");
       const store = transaction.objectStore(tableName);
-      store.delete(value);
-      success();
+
+      if (typeof condition == "function") {
+        // const i = store.index(index);
+        const request = store.openCursor();
+        let res = [];
+        request.onsuccess = e => {
+          const cursor = e.target.result;
+          if (cursor) {
+            const val = cursor.value;
+            if (condition(val)) {
+              res.push(val);
+              cursor.delete();
+            }
+            cursor.continue();
+          } else {
+            if (res.length == 0) {
+              error(`数据库中没有任何符合condition的元素`);
+              return;
+            }
+            success(res);
+          }
+        };
+      } else {
+        log_error("in delete,condition is required,and type is function");
+      }
     };
     this._action_(handler);
   }
+
+
 
   /**
    * @method 修改数据
    * @param {Object}
    *   @property {String} tableName 表名
-   *   @property {String|Number} value 待操作数据主键值
+   *   @property {Function} condition 查询的条件，遍历，与filter类似
+   *      @arg {Object} 每个元素
+   *      @return 条件
    *   @property {Function} handle 处理函数，接收本条数据的引用，对其修改
-   *   @property {Function} [success] 修改成功的回调，返回修改成功的数据
+   *   @property {Function} [success] 修改成功的回调，返回修改成功的数据   @return {Array} 返回被修改后的值
+   *   @property {Function} [error] 错误函数 @return {String}
    * */
-  update({ tableName, value, handle, success = () => {} }) {
+  update({
+    tableName,
+    condition,
+    handle,
+    success = () => {},
+    error = () => {}
+  }) {
     if (typeof handle !== "function") {
       log_error("update中handle必须是一个function类型");
       return;
@@ -211,17 +251,37 @@ class DB {
     const handler = () => {
       const transaction = this.db.transaction(tableName, "readwrite");
       const store = transaction.objectStore(tableName);
-      const request = store.get(value);
-      request.onsuccess = e => {
-        const result = e.target.result;
-        handle(result);
-        store.put(result);
-        success(result);
-      };
-    };
 
+      if (typeof condition == "function") {
+        // const i = store.index(index);
+        const request = store.openCursor();
+        let res = [];
+        request.onsuccess = e => {
+          const cursor = e.target.result;
+          if (cursor) {
+            const val = cursor.value;
+            if (condition(val)) {
+              handle(val);
+              res.push(val);
+              cursor.update(val);
+            }
+            cursor.continue();
+          } else {
+            if (res.length == 0) {
+              error(`数据库中没有任何符合condition的元素`);
+              return;
+            }
+            success(res);
+          }
+        };
+      } else {
+        log_error("in update,condition is required,and type is function");
+      }
+    };
     this._action_(handler);
   }
+
+
 
   // db是异步的,保证fn执行的时候db存在
   _action_(fn) {
@@ -236,6 +296,8 @@ class DB {
     }
   }
 
+
+
   /**
    * 创建table
    * @option<Object>  keyPath指定主键 autoIncrement是否自增
@@ -249,6 +311,8 @@ class DB {
       }
     }
   }
+
+
 
   /**
    * 创建索引
