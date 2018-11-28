@@ -1,6 +1,6 @@
 import Dep from "./uitils/Dep.js";
-import {log_error} from "./uitils/log";
-import { indexedDB,IDBTransaction,IDBKeyRange} from './global'
+import { log_error } from "./uitils/log";
+import { indexedDB, IDBTransaction, IDBKeyRange } from "./global";
 const _dep_ = new Dep();
 
 class DB {
@@ -85,15 +85,21 @@ class DB {
     this.table.push(tableOption);
   }
 
-   /**
-    * @method 查询
-    * @param {Object}
-    *   @property {String} tableName 表名
-    *   @property {String|Number} value 如果没有传index，则是以主键值查询，如果有index，根据index值查询
-    *   @property {String} index 要查询的索引名称
-    *   @property {Function} [success] 查询成功的回调，返回查到的结果
-    * */
-  query({ tableName, value,index, success = () => {}, mode = "readwrite" }) {
+  /**
+   * @method 查询
+   * @param {Object}
+   *   @property {String} tableName 表名
+   *   @property {Function} condition 查询的条件
+   *      @arg {Object} 遍历每条数据，和filter类似
+   *      @return 条件
+   *   @property {Function} [success] @return {Array} 查询成功的回调，返回查到的结果
+   * */
+  query({
+    tableName,
+    condition,
+    success = () => {},
+    mode = "readwrite"
+  }) {
     if (typeof success !== "function") {
       log_error("query方法中success必须是一个Function类型");
       return;
@@ -103,23 +109,41 @@ class DB {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
       // 容易index存在则根据索引查找，如果不存在则根据主键查找
-      const request = index?store.index(index).get(value):store.get(value);
-      request.onsuccess = e => {
-        const result = e.target.result;
-        success(result);
-      };
+
+      if (typeof condition == "function") {
+        // const i = store.index(index);
+        const request = store.openCursor();
+        let res = [];
+        request.onsuccess = e => {
+          var cursor = e.target.result;
+          if (cursor) {
+            var val = cursor.value;
+            if (condition(val)) res.push(val);
+            cursor.continue();
+          } else {
+            success(res);
+          }
+        };
+      } else {
+        log_error("condition is required,and type is function")
+        // const request = store.get(value);
+        // request.onsuccess = e => {
+        //   const result = e.target.result;
+        //   success([result]);
+        // };
+      }
     };
 
     this._action_(handler);
   }
 
-   /**
-    * @method 增
-    * @param {Object}
-    *   @property {String} tableName 表名
-    *   @property {Object} data 插入的数据
-    *   @property {Function} [success] 插入成功的回调
-    * */
+  /**
+   * @method 增
+   * @param {Object}
+   *   @property {String} tableName 表名
+   *   @property {Object} data 插入的数据
+   *   @property {Function} [success] 插入成功的回调
+   * */
   insert({ tableName, data, success = () => {} }) {
     if (Object.prototype.toString.call(data) !== "[object Object]") {
       log_error("insert方法中的data必须是Object类型");
@@ -143,14 +167,13 @@ class DB {
     this._action_(handler);
   }
 
-  
-    /**
-    * @method 删除数据
-    * @param {Object}
-    *   @property {String} tableName 表名
-    *   @property {String|Number} value 主键值
-    *   @property {Function} [success] 删除成功的回调
-    * */
+  /**
+   * @method 删除数据
+   * @param {Object}
+   *   @property {String} tableName 表名
+   *   @property {String|Number} value 主键值
+   *   @property {Function} [success] 删除成功的回调
+   * */
   delete({ tableName, value, success = () => {} }) {
     if (typeof success !== "function") {
       log_error("delete方法中success必须是一个Function类型");
@@ -167,13 +190,13 @@ class DB {
   }
 
   /**
-  * @method 修改数据
-  * @param {Object}
-  *   @property {String} tableName 表名
-  *   @property {String|Number} value 待操作数据主键值
-  *   @property {Function} handle 处理函数，接收本条数据的引用，对其修改
-  *   @property {Function} [success] 修改成功的回调，返回修改成功的数据
-  * */
+   * @method 修改数据
+   * @param {Object}
+   *   @property {String} tableName 表名
+   *   @property {String|Number} value 待操作数据主键值
+   *   @property {Function} handle 处理函数，接收本条数据的引用，对其修改
+   *   @property {Function} [success] 修改成功的回调，返回修改成功的数据
+   * */
   update({ tableName, value, handle, success = () => {} }) {
     if (typeof handle !== "function") {
       log_error("update中handle必须是一个function类型");
@@ -218,7 +241,7 @@ class DB {
    * @option<Object>  keyPath指定主键 autoIncrement是否自增
    * @index 索引配置
    * */
-  _create_table_(idb, { tableName, option,indexs = []}) {
+  _create_table_(idb, { tableName, option, indexs = [] }) {
     if (!idb.objectStoreNames.contains(tableName)) {
       let store = idb.createObjectStore(tableName, option);
       for (let indexItem of indexs) {

@@ -38,14 +38,13 @@ Idb(db_student_config).then(student_db => {
   });
   setTimeout(()=>{
      // 查
-  student_db.query({
-    tableName: "grade",
-    value: 100,
-    index: "score",
-    success: r => {
-      console.log(r);
-    }
-  });
+    student_db.query({
+      tableName: "grade",
+      condition: (item)=> item.score == 100,
+      success: r => {
+        console.log(r);
+      }
+    });
   },1000)
  
 
@@ -62,19 +61,19 @@ Idb(db_student_config).then(student_db => {
   });
 
   // 删除
-  student_db.delete({
-    tableName: "grade",
-    value: 2,
-    success: () => {
-      console.log("删除成功");
-    }
-  });
+  // student_db.delete({
+  //   tableName: "grade",
+  //   value: 2,
+  //   success: () => {
+  //     console.log("删除成功");
+  //   }
+  // });
 
   // 关闭该数据库
-  student_db.close_db();
+  // student_db.close_db();
 
   // 删除该数据库
-  student_db.delete_db();
+  // student_db.delete_db();
 },err => {
   console.log(err)
 });

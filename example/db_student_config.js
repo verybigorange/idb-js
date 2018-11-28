@@ -16,7 +16,7 @@ export default {
           key: "name"
         },
         {
-          key: "score"
+          key: "score",
         }
       ]
     },

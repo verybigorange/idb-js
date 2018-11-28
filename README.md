@@ -95,28 +95,28 @@
         student_db.insert({
                 tableName: "grade",
                 data: {
-                id: 1,
-                score: 98,
-                name: "小明"
-            }
+                    id: 1,
+                    score: 98,
+                    name: "小明"
+                }
         });
        
 
-       /**
-        * @method 查询数据
+        /**
+        * @method 查询
         * @param {Object}
         *   @property {String} tableName 表名
-        *   @property {String|Number} value 如果没有传index，则是以主键值查询，如果有index，根据index值查询
-        *   @property {String} index 要查询的索引名称
-        *   @property {Function} [success] 查询成功的回调，返回查到的结果
+        *   @property {Function} condition 查询的条件
+        *      @arg {Object} 遍历每条数据，和filter类似
+        *      @return 条件
+        *   @property {Function} [success] @return {Array} 查询成功的回调，返回查到的结果
         * */
 
         student_db.query({
             tableName: "grade",
-            value: 100,
-            index: "score",
+            condition: (item)=> item.score == 100,
             success: r => {
-                console.log(r);
+                 console.log(r);
             }
         });
       
