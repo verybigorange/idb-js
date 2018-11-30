@@ -56,7 +56,7 @@ class DB {
       this.idb = e.target.result;
 
       for (let i = 0; i < this.table.length; i++) {
-        this._create_table_(this.idb, this.table[i]);
+        this.__create_table(this.idb, this.table[i]);
       }
     };
   }
@@ -69,7 +69,7 @@ class DB {
       this.db.close();
     };
 
-    this._action_(handler);
+    this.__action(handler);
   }
 
 
@@ -133,7 +133,7 @@ class DB {
       }
     };
 
-    this._action_(handler);
+    this.__action(handler);
   }
 
 
@@ -165,7 +165,7 @@ class DB {
       success();
     };
 
-    this._action_(handler);
+    this.__action(handler);
   }
 
 
@@ -215,7 +215,7 @@ class DB {
         log_error("in delete,condition is required,and type is function");
       }
     };
-    this._action_(handler);
+    this.__action(handler);
   }
 
 
@@ -278,13 +278,13 @@ class DB {
         log_error("in update,condition is required,and type is function");
       }
     };
-    this._action_(handler);
+    this.__action(handler);
   }
 
 
 
   // db是异步的,保证fn执行的时候db存在
-  _action_(fn) {
+  __action(fn) {
     const action = () => {
       fn();
     };
@@ -303,11 +303,11 @@ class DB {
    * @option<Object>  keyPath指定主键 autoIncrement是否自增
    * @index 索引配置
    * */
-  _create_table_(idb, { tableName, option, indexs = [] }) {
+  __create_table(idb, { tableName, option, indexs = [] }) {
     if (!idb.objectStoreNames.contains(tableName)) {
       let store = idb.createObjectStore(tableName, option);
       for (let indexItem of indexs) {
-        this._create_index_(store, indexItem);
+        this.__create_index(store, indexItem);
       }
     }
   }
@@ -318,7 +318,7 @@ class DB {
    * 创建索引
    * @option<Object> unique是否是唯一值
    * */
-  _create_index_(store, { key, option }) {
+  __create_index(store, { key, option }) {
     store.createIndex(key, key, option);
   }
 }
