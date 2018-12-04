@@ -33,8 +33,8 @@
                 ]
             },
             {
-            tableName: "info",                      // *表名 另外一张表，同理
-            option: { keyPath: "id" },
+                tableName: "info",                      // *表名 另外一张表，同理
+                option: { keyPath: "id" },
                 indexs: [
                     {
                         key: "id",
@@ -62,10 +62,10 @@
 ```
     // 载入数据配置，数据库开启成功后会拿到db来对数据库进行操作
 
-    import Idb from 'idb-js'
-    import db_student_config from './db_student_config'
+    import Idb from 'idb-js'  //  引入Idb
+    import db_student_config from './db_student_config'   //  引入数据库配置
 
-    Idb(db_student_config).then(student_db => {
+    Idb(db_student_config).then(student_db => {     //  载入配置，数据库开启成功后返回该数据库实例
 
        /**
         * @method close_db 关闭此数据库
