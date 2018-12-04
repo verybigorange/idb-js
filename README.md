@@ -21,6 +21,28 @@
     Idb(db_student_config).then(student_db => {...})
 ```
 
+### _数据库实例db方法:_
+
+方法|方法名|参数|参数属性
+--|:--|:--:|:--
+close_db|关闭数据库|空|-
+delete_db|删除数据库|空|-
+insert|添加数据|{Object}|tableName {String} 表名 （required）
+||||data {Object} 添加的值 （required）
+||||success {Function} 添加成功的回调
+delete|删除数据|{Object}|tableName {String} 表名 （required）
+||||condition {Function} 匹配条件 （required）
+||||success {Function} 删除成功的回调
+query|查询数据|{Object}|tableName {String} 表名 （required）
+||||condition {Function} 匹配条件 （required）
+||||success {Function} 查询成功的回调 @arg {Array} 接收结果
+update|修改数据|{Object}|tableName {String} 表名 （required）
+||||condition {Function} 匹配条件 （required）
+||||handle {Function} 修改方式 （required） @arg {Object} 修改项
+||||success {Function} 修改成功的回调 @arg {Array} 返回被修改后项
+
+
+
 ## 例子：
 
 ### _数据库配置：_
