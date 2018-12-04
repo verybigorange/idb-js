@@ -21,7 +21,7 @@
     Idb(db_student_config).then(student_db => {...})
 ```
 
-### _数据库实例db方法:_
+### _数据库实例db方法：_
 
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
@@ -40,7 +40,6 @@ update|修改数据|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||handle {Function} 修改方式 （required） @arg {Object} 修改项
 ||||success {Function} 修改成功的回调 @arg {Array} 返回被修改后项
-
 
 
 ## 例子：
