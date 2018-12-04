@@ -6,6 +6,23 @@
     npm install idb-js --save
 ```
 
+### 使用
+* 第一步 引入Idb
+```
+    import Idb from 'idb-js'  //  引入Idb
+```
+* 第二步 引入数据库配置
+```
+    import db_student_config from './db_student_config'
+```
+  
+* 第三步 载入配置，数据库开启成功拿到数据库实例进行操作
+```
+    Idb(db_student_config).then(student_db => {...})
+```
+
+## 例子：
+
 ### _数据库配置：_
 ```
     // in db_student_config.js
@@ -59,6 +76,7 @@
 
 
 ### _使用：_
+
 ```
     // 载入数据配置，数据库开启成功后会拿到db来对数据库进行操作
 
