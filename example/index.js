@@ -51,7 +51,7 @@ Idb(db_student_config).then(student_db => {
   // 改
   student_db.update({
     tableName: "grade",
-    condition:item => item == 100,
+    condition:item => item.score == 100,
     handle: r => {
       r.name = '我的name被修改了';
     },
