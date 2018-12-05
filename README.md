@@ -40,6 +40,8 @@ update|修改数据|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||handle {Function} 修改方式 （required） @arg {Object} 修改项
 ||||success {Function} 修改成功的回调 @arg {Array} 返回被修改后项
+queryAll|查询某张表的所有数据|{Object}|tableName {String} 表名 （required）
+||||success {Function} 查询成功的回调 @arg {Array} 接收结果
 
 
 ## 例子：
@@ -201,6 +203,21 @@ update|修改数据|{Object}|tableName {String} 表名 （required）
             console.log("删除成功");
           },
           error:err => console.log(err)
+        });
+
+
+
+        /**
+        * @method 查询某张表的所有数据
+        * @param {Object}
+        *   @property {String} tableName 表名
+        *   @property {Function} [success] @return {Array} 查询成功的回调，返回查到的结果
+        * */
+        student_db.queryAll({
+            tableName: "grade",
+            success: (res) => {
+            console.log(res)
+            }
         });
 
     },err => {

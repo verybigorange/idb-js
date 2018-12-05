@@ -13,8 +13,6 @@ class DB {
     this._status = false; // 是否先添加了表
   }
 
-
-  
   /**
    * 打开数据库
    * @success 成功的回调，返回db，非必传
@@ -61,8 +59,6 @@ class DB {
     };
   }
 
-
-
   //  关闭数据库
   close_db() {
     const handler = () => {
@@ -72,14 +68,10 @@ class DB {
     this.__action(handler);
   }
 
-
-
   // 删除数据库
   delete_db() {
     indexedDB.deleteDatabase(name);
   }
-
-
 
   /**
    * 添加一张表
@@ -93,7 +85,38 @@ class DB {
     this.table.push(tableOption);
   }
 
+  /**
+   * @method 查询某张表的所有数据
+   * @param {Object}
+   *   @property {String} tableName 表名
+   *   @property {Function} [success] @return {Array} 查询成功的回调，返回查到的结果
+   * */
+  queryAll({ tableName, success = () => {}, mode = "readwrite" }) {
+    if (typeof success !== "function") {
+      log_error("queryAll方法中success必须是一个Function类型");
+      return;
+    }
 
+    const handler = () => {
+      const transaction = this.db.transaction(tableName, mode);
+      const store = transaction.objectStore(tableName);
+
+      const request = store.openCursor();
+      let res = [];
+      request.onsuccess = e => {
+        var cursor = e.target.result;
+        if (cursor) {
+          var val = cursor.value;
+          res.push(val);
+          cursor.continue();
+        } else {
+          success(res);
+        }
+      };
+    };
+
+    this.__action(handler);
+  }
 
   /**
    * @method 查询
@@ -136,8 +159,6 @@ class DB {
     this.__action(handler);
   }
 
-
-
   /**
    * @method 增
    * @param {Object}
@@ -167,8 +188,6 @@ class DB {
 
     this.__action(handler);
   }
-
-
 
   /**
    * @method 删除数据
@@ -217,8 +236,6 @@ class DB {
     };
     this.__action(handler);
   }
-
-
 
   /**
    * @method 修改数据
@@ -281,8 +298,6 @@ class DB {
     this.__action(handler);
   }
 
-
-
   // db是异步的,保证fn执行的时候db存在
   __action(fn) {
     const action = () => {
@@ -295,8 +310,6 @@ class DB {
       action();
     }
   }
-
-
 
   /**
    * 创建table
@@ -311,8 +324,6 @@ class DB {
       }
     }
   }
-
-
 
   /**
    * 创建索引

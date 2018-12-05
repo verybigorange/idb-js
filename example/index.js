@@ -61,6 +61,13 @@ Idb(db_student_config).then(student_db => {
     error:msg=> console.log(msg)
   });
 
+  student_db.queryAll({
+    tableName: "grade",
+    success: (res) => {
+      console.log(res)
+    }
+  });
+
   // 删除
   // student_db.delete({
   //   tableName: "grade",
