@@ -200,7 +200,7 @@ update|修改数据|{Object}|tableName {String} 表名 （required）
           success: (res) => {
             console.log("删除成功");
           },
-          error：err => console.log(err)
+          error:err => console.log(err)
         });
 
     },err => {
