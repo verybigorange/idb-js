@@ -100,6 +100,12 @@ Idb(db_student_config).then(student_db => {
   //   tableName:'grade'
   // })
 
+  // 通过主键删除某条数据
+  // student_db.delete_by_primaryKey({
+  //   tableName:'grade',
+  //   target:1,
+  //   success:()=>console.log('删除成功')
+  // })
   
 },err => {
   console.log(err)

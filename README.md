@@ -28,7 +28,7 @@
 --|:--|:--:|:--
 close_db|关闭数据库|空|-
 delete_db|删除数据库|空|-  
-clear_table|清空某张表的数据|{Object}|tableName {String} 表名 （required
+clear_table|清空某张表的数据|{Object}|tableName {String} 表名 （required）
 
 ### 查询（query）：
 _查询单条数据的时候建议采用query_by_primaryKey或者query_by_index的方式效率更高。_
@@ -57,6 +57,9 @@ insert|添加数据|{Object}|tableName {String} 表名 （required）
 delete|删除数据|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||success {Function} 删除成功的回调
+delete_by_primaryKey|通过主键删除某条数据|{Object}|tableName {String} 表名 （required）
+||||target { String \| Number } 主键值 （required）
+||||success {Function} 删除成功的回调 @arg {Null}
 update|修改数据|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||handle {Function} 修改方式 （required） @arg {Object} 修改项
@@ -239,6 +242,14 @@ update|修改数据|{Object}|tableName {String} 表名 （required）
             tableName:'grade'
         })
 
+        /**
+        * @method 通过主键删除某条数据
+        * */
+        student_db.delete_by_primaryKey({
+            tableName:'grade',
+            target:1,
+            success:()=>console.log('删除成功')
+        })
     },err => {
         console.log(err)
     });

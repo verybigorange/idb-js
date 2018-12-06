@@ -247,6 +247,29 @@ class DB {
     this.__action(handler);
   }
 
+
+   /**
+   * @method 删除数据(主键)
+   * @param {Object}
+   *   @property {String} tableName 表名
+   *   @property {String\|Number} target 目标主键值
+   *   @property {Function} [success] 删除成功的回调  @return {Null}
+   * */
+  delete_by_primaryKey({ tableName, target, success = () => {}}) {
+    if (typeof success !== "function") {
+      log_error("in delete_by_primaryKey，success必须是一个Function类型");
+      return;
+    }
+
+    const handler = () => {
+      const transaction = this.db.transaction(tableName, "readwrite");
+      const store = transaction.objectStore(tableName);
+      store.delete(target);
+      success()
+    };
+    this.__action(handler);
+  }
+
   /**
    * @method 修改数据
    * @param {Object}
