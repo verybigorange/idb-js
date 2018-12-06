@@ -26,22 +26,34 @@
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
 close_db|关闭数据库|空|-
-delete_db|删除数据库|空|-
+delete_db|删除数据库|空|-  
+<br/><br/>
+查（query）：
+方法|方法名|参数|参数属性
+--|:--|:--:|:--
+query|查询匹配到的数据（游标）|{Object}|tableName {String} 表名 （required）
+||||condition {Function} 匹配条件 （required）
+||||success {Function} 查询成功的回调 @arg {Array} 接收结果
+query_by_primaryKey|通过主键查询某条数据|{Object}|tableName {String} 表名 （required）
+||||keyValue { String \| Number } 主键值 （required）
+||||success {Function} 查询成功的回调 @arg {Array} 接收结果
+queryAll|查询某张表的所有数据|{Object}| tableName {String} 表名 （required）
+||||success {Function} 查询成功的回调 @arg {Array} 接收结果
+<br/><br/>
+删（delete）：
+方法|方法名|参数|参数属性
+--|:--|:--:|:--
 insert|添加数据|{Object}|tableName {String} 表名 （required）
 ||||data {Object} 添加的值 （required）
 ||||success {Function} 添加成功的回调
 delete|删除数据|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||success {Function} 删除成功的回调
-query|查询数据|{Object}|tableName {String} 表名 （required）
-||||condition {Function} 匹配条件 （required）
-||||success {Function} 查询成功的回调 @arg {Array} 接收结果
 update|修改数据|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||handle {Function} 修改方式 （required） @arg {Object} 修改项
 ||||success {Function} 修改成功的回调 @arg {Array} 返回被修改后项
-queryAll|查询某张表的所有数据|{Object}|tableName {String} 表名 （required）
-||||success {Function} 查询成功的回调 @arg {Array} 接收结果
+
 
 
 ## 例子：
@@ -124,10 +136,6 @@ queryAll|查询某张表的所有数据|{Object}|tableName {String} 表名 （re
 
         /**
         * @method 增加数据
-        * @param {Object}
-        *   @property {String} tableName 表名
-        *   @property {Object} data 插入的数据
-        *   @property {Function} [success] 插入成功的回调
         * */
 
         student_db.insert({
@@ -141,34 +149,20 @@ queryAll|查询某张表的所有数据|{Object}|tableName {String} 表名 （re
        
 
         /**
-        * @method 查询
-        * @param {Object}
-        *   @property {String} tableName 表名
-        *   @property {Function} condition 查询的条件，遍历，与filter类似
-        *      @arg {Object} 每个元素
-        *      @return 条件
-        *   @property {Function} [success] @return {Array} 查询成功的回调，返回查到的结果
+        * @method 查询数据（游标）
         * */
 
         student_db.query({
             tableName: "grade",
             condition: (item)=> item.score == 100,
             success: r => {
-                 console.log(r);
+                console.log(r);
             }
         });
       
        
         /**
         * @method 修改数据
-        * @param {Object}
-        *   @property {String} tableName 表名
-        *   @property {Function} condition 查询的条件，遍历，与filter类似
-        *      @arg {Object} 每个元素
-        *      @return 条件
-        *   @property {Function} handle 处理函数，接收本条数据的引用，对其修改
-        *   @property {Function} [success] 修改成功的回调，返回修改成功的数据   @return {Array} 返回被修改后的值
-        *   @property {Function} [error] 错误函数 @return {String}
         * */
 
         student_db.update({
@@ -179,21 +173,13 @@ queryAll|查询某张表的所有数据|{Object}|tableName {String} 表名 （re
             },
             success: r => {
                 console.log("修改成功", r);
-            },
-            error:msg=> console.log(msg)
+            }
         });
         
 
 
        /**
         * @method 删除数据
-        * @param {Object}
-        *   @property {String} tableName 表名
-        *   @property {Function} condition 查询的条件，遍历，与filter类似
-        *      @arg {Object} 每个元素
-        *      @return 条件
-        *   @property {Function} [success] 删除成功的回调  @return {Array} 返回被删除的值
-        *   @property {Function} [error] 错误函数 @return {String}
         * */
 
         student_db.delete({
@@ -201,25 +187,31 @@ queryAll|查询某张表的所有数据|{Object}|tableName {String} 表名 （re
           condition: (item)=> item.name == '小明',
           success: (res) => {
             console.log("删除成功");
-          },
-          error:err => console.log(err)
+          }
         });
 
 
 
         /**
         * @method 查询某张表的所有数据
-        * @param {Object}
-        *   @property {String} tableName 表名
-        *   @property {Function} [success] @return {Array} 查询成功的回调，返回查到的结果
         * */
         student_db.queryAll({
             tableName: "grade",
             success: (res) => {
-            console.log(res)
+                console.log(res)
             }
         });
 
+
+
+        /**
+        * @method 根据主键查询某条数据
+        * */
+        student_db.query_by_primaryKey({
+            tableName:'grade',
+            keyValue:1,
+            success:(res)=>{console.log(res)}
+        })
     },err => {
         console.log(err)
     });

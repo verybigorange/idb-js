@@ -67,7 +67,12 @@ Idb(db_student_config).then(student_db => {
       console.log(res)
     }
   });
-
+  
+  student_db.query_by_primaryKey({
+    tableName:'grade',
+    keyValue:1,
+    success:(res)=>{console.log(res)}
+  })
   // 删除
   // student_db.delete({
   //   tableName: "grade",

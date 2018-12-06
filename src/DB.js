@@ -298,6 +298,33 @@ class DB {
     this.__action(handler);
   }
 
+
+   /**
+   * @method 查询数据（主键值）
+   * @param {Object}
+   *   @property {String} tableName 表名
+   *   @property {Number|String} keyValue 主键值
+   *   @property {Function} [success] 修改成功的回调，返回修改成功的数据   @return {Object} 返回查到的结果
+   *
+   * */
+  query_by_primaryKey({ tableName, keyValue, success = () => {}, mode = "readwrite" }) {
+    const handleFn = () => {
+      const transaction = this.db.transaction(tableName, mode);
+      const store = transaction.objectStore(tableName);
+      const request = store.get(keyValue);
+      request.onsuccess = (e) => {
+        const result = e.target.result;
+        if (typeof success !== "function") {
+          log_error("in query_by_primaryKey,success必须是一个Function类型");
+          return;
+        }
+        success(result || null);
+      };
+    };
+    this.__action(handleFn);
+  }
+
+
   // db是异步的,保证fn执行的时候db存在
   __action(fn) {
     const action = () => {
