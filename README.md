@@ -35,7 +35,7 @@ _查询单条数据的时候建议采用query_by_primaryKey或者query_by_index�
 
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
-query|查询匹配到的数据（游标）|{Object}|tableName {String} 表名 （required）
+query|查询匹配到的数据（可查询多条数据）|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||success {Function} 查询成功的回调 @arg {Array} 接收结果
 query_by_primaryKey|通过主键查询某条数据|{Object}|tableName {String} 表名 （required）
@@ -54,13 +54,13 @@ queryAll|查询某张表的所有数据|{Object}| tableName {String} 表名 （r
 insert|添加数据|{Object}|tableName {String} 表名 （required）
 ||||data {Object} 添加的值 （required）
 ||||success {Function} 添加成功的回调
-delete|删除数据|{Object}|tableName {String} 表名 （required）
+delete|删除数据（可删除多条数据）|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||success {Function} 删除成功的回调
 delete_by_primaryKey|通过主键删除某条数据|{Object}|tableName {String} 表名 （required）
 ||||target { String \| Number } 主键值 （required）
 ||||success {Function} 删除成功的回调 @arg {Null}
-update|修改数据|{Object}|tableName {String} 表名 （required）
+update|修改数据（可更改多条数据）|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||handle {Function} 修改方式 （required） @arg {Object} 修改项
 ||||success {Function} 修改成功的回调 @arg {Array} 返回被修改后项
