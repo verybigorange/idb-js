@@ -36,16 +36,16 @@ Idb(db_student_config).then(student_db => {
       sex: 1
     }
   });
-  // setTimeout(()=>{
-  //    // 查
-  //   student_db.query({
-  //     tableName: "grade",
-  //     condition: (item)=> item.score == 100,
-  //     success: r => {
-  //       console.log(r);
-  //     }
-  //   });
-  // },1000)
+  setTimeout(()=>{
+     // 查
+    student_db.query({
+      tableName: "grade",
+      condition: (item)=> item.score == 100,
+      success: r => {
+        console.log(r);
+      }
+    });
+  },1000)
  
 
   // 改
