@@ -23,11 +23,12 @@
 
 ## _数据库实例db方法：_
 
-### 数据库的删除与关闭：
+### 数据库与表（store）：
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
 close_db|关闭数据库|空|-
 delete_db|删除数据库|空|-  
+clear_table|清空某张表的数据|{Object}|tableName {String} 表名 （required
 
 ### 查询（query）：
 _查询单条数据的时候建议采用query_by_primaryKey或者query_by_index的方式效率更高。_
@@ -230,6 +231,14 @@ update|修改数据|{Object}|tableName {String} 表名 （required）
             target:'小明',
             success:(res)=>{console.log(res)}
         })
+
+        /**
+        * @method 清空某张表的数据
+        * */
+        student_db.clear_table({
+            tableName:'grade'
+        })
+
     },err => {
         console.log(err)
     });

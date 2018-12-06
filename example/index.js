@@ -94,6 +94,13 @@ Idb(db_student_config).then(student_db => {
 
   // 删除该数据库
   // student_db.delete_db();
+
+  //清空某张表的数据
+  // student_db.clear_table({
+  //   tableName:'grade'
+  // })
+
+  
 },err => {
   console.log(err)
 });

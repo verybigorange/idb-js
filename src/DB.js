@@ -73,6 +73,16 @@ class DB {
     indexedDB.deleteDatabase(name);
   }
 
+  //清空某张表的数据
+  clear_table({ tableName }) {
+    const handler = () => {
+      const transaction = this.db.transaction(tableName, "readwrite");
+      const store = transaction.objectStore(tableName);
+      store.clear();
+    };
+    this.__action(handler);
+  }
+
   /**
    * 添加一张表
    * @param tableOption<Object>
@@ -298,8 +308,7 @@ class DB {
     this.__action(handler);
   }
 
-
-   /**
+  /**
    * @method 查询数据（主键值）
    * @param {Object}
    *   @property {String} tableName 表名
@@ -307,7 +316,12 @@ class DB {
    *   @property {Function} [success] 查询成功的回调，返回查询成功的数据   @return {Object} 返回查到的结果
    *
    * */
-  query_by_primaryKey({ tableName, target, success = () => {}, mode = "readwrite" }) {
+  query_by_primaryKey({
+    tableName,
+    target,
+    success = () => {},
+    mode = "readwrite"
+  }) {
     if (typeof success !== "function") {
       log_error("in query_by_primaryKey,success必须是一个Function类型");
       return;
@@ -316,7 +330,7 @@ class DB {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
       const request = store.get(target);
-      request.onsuccess = (e) => {
+      request.onsuccess = e => {
         const result = e.target.result;
         success(result || null);
       };
@@ -324,7 +338,7 @@ class DB {
     this.__action(handleFn);
   }
 
-   /**
+  /**
    * @method 查询数据（索引）
    * @param {Object}
    *   @property {String} tableName 表名
@@ -333,7 +347,13 @@ class DB {
    *   @property {Function} [success] 查询成功的回调，返回查询成功的数据   @return {Object} 返回查到的结果
    *
    * */
-  query_by_index({ tableName, indexName,target, success = () => {}, mode = "readwrite" }) {
+  query_by_index({
+    tableName,
+    indexName,
+    target,
+    success = () => {},
+    mode = "readwrite"
+  }) {
     if (typeof success !== "function") {
       log_error("in query_by_index,success必须是一个Function类型");
       return;
@@ -342,14 +362,13 @@ class DB {
       const transaction = this.db.transaction(tableName, mode);
       const store = transaction.objectStore(tableName);
       const index = store.index(indexName);
-      index.get(target).onsuccess = (e) => {
+      index.get(target).onsuccess = e => {
         const result = e.target.result;
         success(result || null);
       };
     };
     this.__action(handleFn);
   }
-
 
   // db是异步的,保证fn执行的时候db存在
   __action(fn) {
