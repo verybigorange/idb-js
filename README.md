@@ -21,26 +21,33 @@
     Idb(db_student_config).then(student_db => {...})
 ```
 
-### _数据库实例db方法：_
+## _数据库实例db方法：_
 
+### 数据库的删除与关闭：
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
 close_db|关闭数据库|空|-
 delete_db|删除数据库|空|-  
-<br/><br/>
-查（query）：
+
+### 查询（query）：
+_查询单条数据的时候建议采用query_by_primaryKey或者query_by_index的方式效率更高。_
+
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
 query|查询匹配到的数据（游标）|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||success {Function} 查询成功的回调 @arg {Array} 接收结果
 query_by_primaryKey|通过主键查询某条数据|{Object}|tableName {String} 表名 （required）
-||||keyValue { String \| Number } 主键值 （required）
+||||target { String \| Number } 主键值 （required）
+||||success {Function} 查询成功的回调 @arg {Array} 接收结果
+query_by_index|通过索引查询某条数据（数据库必须建立了索引）|{Object}|tableName {String} 表名 （required）
+||||indexName { String } 目标索引 （required）
+||||target { String \| Number } 目标索引值 （required）
 ||||success {Function} 查询成功的回调 @arg {Array} 接收结果
 queryAll|查询某张表的所有数据|{Object}| tableName {String} 表名 （required）
 ||||success {Function} 查询成功的回调 @arg {Array} 接收结果
-<br/><br/>
-删（delete）：
+
+### 删除（delete）：
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
 insert|添加数据|{Object}|tableName {String} 表名 （required）
@@ -209,7 +216,18 @@ update|修改数据|{Object}|tableName {String} 表名 （required）
         * */
         student_db.query_by_primaryKey({
             tableName:'grade',
-            keyValue:1,
+            target:1,
+            success:(res)=>{console.log(res)}
+        })
+
+
+        /**
+        * @method 根据索引查询某条数据
+        * */
+        student_db.query_by_index({
+            tableName:'grade',
+            indexName:'name',
+            target:'小明',
             success:(res)=>{console.log(res)}
         })
     },err => {

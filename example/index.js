@@ -70,7 +70,14 @@ Idb(db_student_config).then(student_db => {
   
   student_db.query_by_primaryKey({
     tableName:'grade',
-    keyValue:1,
+    target:1,
+    success:(res)=>{console.log(res)}
+  })
+
+  student_db.query_by_index({
+    tableName:'grade',
+    indexName:'name',
+    target:'小明',
     success:(res)=>{console.log(res)}
   })
   // 删除
