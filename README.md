@@ -26,34 +26,29 @@
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
 close_db|关闭数据库|空|-
-<br/>
 delete_db|删除数据库|空|-  
-
+<br/><br/>
 查（query）：
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
 query|查询匹配到的数据（游标）|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||success {Function} 查询成功的回调 @arg {Array} 接收结果
-<br/>
 query_by_primaryKey|通过主键查询某条数据|{Object}|tableName {String} 表名 （required）
 ||||keyValue { String \| Number } 主键值 （required）
 ||||success {Function} 查询成功的回调 @arg {Array} 接收结果
-<br/>
 queryAll|查询某张表的所有数据|{Object}| tableName {String} 表名 （required）
 ||||success {Function} 查询成功的回调 @arg {Array} 接收结果
-
+<br/><br/>
 删（delete）：
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
 insert|添加数据|{Object}|tableName {String} 表名 （required）
 ||||data {Object} 添加的值 （required）
 ||||success {Function} 添加成功的回调
-<br/>
 delete|删除数据|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||success {Function} 删除成功的回调
-<br/>
 update|修改数据|{Object}|tableName {String} 表名 （required）
 ||||condition {Function} 匹配条件 （required）
 ||||handle {Function} 修改方式 （required） @arg {Object} 修改项
