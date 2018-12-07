@@ -178,7 +178,7 @@ class DB {
 
     this.__action(() => {
       const store = this.__create_transaction(tableName, "readwrite");
-      isArray(data)?data.forEach(v => store.add(v)):store.add(data)
+      isArray(data) ? data.forEach(v => store.add(v)) : store.add(data);
       // this.__create_transaction(tableName, "readwrite").add(data);
       success();
     });

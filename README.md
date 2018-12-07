@@ -37,7 +37,7 @@ clear_table|清空某张表的数据|{Object}|tableName {String} 表名 （requi
 ### 添加（insert）：
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
-insert|添加单条或者多条数据|{ Object\|Array }|tableName {String} 表名 （required）
+insert|添加单条或者多条数据|{ Object \| Array }|tableName {String} 表名 （required）
 ||||data {Object} 添加的值 （required）
 ||||success {Function} 添加成功的回调
 
