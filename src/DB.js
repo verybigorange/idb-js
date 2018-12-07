@@ -1,6 +1,7 @@
 import Dep from "./uitils/Dep.js";
 import { log_error } from "./uitils/log";
 import { indexedDB, IDBTransaction, IDBKeyRange } from "./global";
+import { isArray, isObject } from "./uitils/type.js";
 
 class DB {
   constructor({ dbName, version }) {
@@ -158,15 +159,15 @@ class DB {
   }
 
   /**
-   * @method 增
+   * @method 增加数据
    * @param {Object}
    *   @property {String} tableName 表名
    *   @property {Object} data 插入的数据
    *   @property {Function} [success] 插入成功的回调
    * */
   insert({ tableName, data, success = () => {} }) {
-    if (Object.prototype.toString.call(data) !== "[object Object]") {
-      log_error("insert方法中的data必须是Object类型");
+    if (!(isArray(data) || isObject(data))) {
+      log_error("in insert，data type is Object or Array");
       return;
     }
 
@@ -176,7 +177,9 @@ class DB {
     }
 
     this.__action(() => {
-      this.__create_transaction(tableName, "readwrite").add(data);
+      const store = this.__create_transaction(tableName, "readwrite");
+      isArray(data)?data.forEach(v => store.add(v)):store.add(data)
+      // this.__create_transaction(tableName, "readwrite").add(data);
       success();
     });
   }
@@ -255,7 +258,6 @@ class DB {
     });
   }
 
-
   /**
    * @method 修改某条数据(主键)
    * @param {Object}
@@ -264,12 +266,7 @@ class DB {
    *   @property {Function} handle 处理函数，接收本条数据的引用，对其修改
    *   @property {Function} [success] 修改成功的回调   @return {Object} 返回被修改后的值
    * */
-  update_by_primaryKey({
-    tableName,
-    target,
-    success = () => {},
-    handle
-  }) {
+  update_by_primaryKey({ tableName, target, success = () => {}, handle }) {
     if (typeof success !== "function") {
       log_error("in update_by_primaryKey，success必须是一个Function类型");
       return;
@@ -280,16 +277,15 @@ class DB {
     }
 
     this.__action(() => {
-      const store = this.__create_transaction(tableName, "readwrite")
+      const store = this.__create_transaction(tableName, "readwrite");
       store.get(target).onsuccess = e => {
-        const currentValue=e.target.result; 
-        handle(currentValue)
-        store.put(currentValue)
-        success(currentValue)
-      }
+        const currentValue = e.target.result;
+        handle(currentValue);
+        store.put(currentValue);
+        success(currentValue);
+      };
     });
   }
-  
 
   /**
    * @method 修改数据

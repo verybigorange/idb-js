@@ -37,7 +37,7 @@ clear_table|清空某张表的数据|{Object}|tableName {String} 表名 （requi
 ### 添加（insert）：
 方法|方法名|参数|参数属性
 --|:--|:--:|:--
-insert|添加数据|{Object}|tableName {String} 表名 （required）
+insert|添加单条或者多条数据|{Object|Array}|tableName {String} 表名 （required）
 ||||data {Object} 添加的值 （required）
 ||||success {Function} 添加成功的回调
 
@@ -161,7 +161,7 @@ update_by_primaryKey|通过主键更改某条数据|{Object}|tableName {String} 
 
 
         /**
-        * @method 增加数据
+        * @method 增加单条数据
         * */
 
         student_db.insert({
@@ -170,9 +170,29 @@ update_by_primaryKey|通过主键更改某条数据|{Object}|tableName {String} 
                     id: 1,
                     score: 98,
                     name: "小明"
-                }
+                },
+                success: () => console.log("添加成功")
         });
        
+       
+       /**
+        * @method 增加多条数据
+        * */
+
+        student_db.insert({
+                tableName: "grade",
+                data: [{
+                    id: 1,
+                    score: 98,
+                    name: "小明"
+                },{
+                    id: 2,
+                    score: 99,
+                    name: "小方"
+                }],
+                success: () => console.log("添加成功")
+        });
+
 
         /**
         * @method 查询数据（游标）

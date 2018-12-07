@@ -37,6 +37,26 @@ Idb(db_student_config).then(
         sex: 1
       }
     });
+    
+    student_db.insert({
+      tableName: "info",
+      data: [
+        {
+          id: 2,
+          age: 13,
+          name: "小1",
+          sex: 2
+        },
+        {
+          id: 3,
+          age: 11,
+          name: "小2",
+          sex: 1
+        }
+      ],
+      success: () => console.log("添加成功")
+    });
+
     setTimeout(() => {
       // 查
       student_db.query({
