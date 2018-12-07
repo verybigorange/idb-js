@@ -235,17 +235,61 @@ class DB {
    *   @property {String\|Number} target 目标主键值
    *   @property {Function} [success] 删除成功的回调  @return {Null}
    * */
-  delete_by_primaryKey({ tableName, target, success = () => {} }) {
+  delete_by_primaryKey({
+    tableName,
+    target,
+    success = () => {},
+    error = () => {}
+  }) {
     if (typeof success !== "function") {
       log_error("in delete_by_primaryKey，success必须是一个Function类型");
       return;
     }
 
     this.__action(() => {
-      this.__create_transaction(tableName, "readwrite").delete(target);
-      success();
+      const request = this.__create_transaction(tableName, "readwrite").delete(
+        target
+      );
+      request.onsuccess = () => success();
+      request.onerror = () => error();
     });
   }
+
+
+  /**
+   * @method 修改某条数据(主键)
+   * @param {Object}
+   *   @property {String} tableName 表名
+   *   @property {String\|Number} target 目标主键值
+   *   @property {Function} handle 处理函数，接收本条数据的引用，对其修改
+   *   @property {Function} [success] 修改成功的回调   @return {Object} 返回被修改后的值
+   * */
+  update_by_primaryKey({
+    tableName,
+    target,
+    success = () => {},
+    handle
+  }) {
+    if (typeof success !== "function") {
+      log_error("in update_by_primaryKey，success必须是一个Function类型");
+      return;
+    }
+    if (typeof handle !== "function") {
+      log_error("in update_by_primaryKey，handle必须是一个Function类型");
+      return;
+    }
+
+    this.__action(() => {
+      const store = this.__create_transaction(tableName, "readwrite")
+      store.get(target).onsuccess = e => {
+        const currentValue=e.target.result; 
+        handle(currentValue)
+        store.put(currentValue)
+        success(currentValue)
+      }
+    });
+  }
+  
 
   /**
    * @method 修改数据
