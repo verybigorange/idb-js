@@ -1,4 +1,4 @@
-# idb-js <small>1.3.0</small>
+# idb-js <small>1.3.1</small>
 
 > 基于indedb的封装，用起来更加简单。
 

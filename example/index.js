@@ -15,6 +15,14 @@ Idb(db_student_config).then(
     student_db.insert({
       tableName: "grade",
       data: {
+        id: 1,
+        score: 99,
+        name: "小明"
+      }
+    });
+    student_db.insert({
+      tableName: "grade",
+      data: {
         id: 2,
         score: 100,
         name: "小红"
@@ -131,14 +139,14 @@ Idb(db_student_config).then(
     //   success:()=>console.log('删除成功')
     // })
 
-    student_db.update_by_primaryKey({
-      tableName: "grade",
-      target: 1,
-      handle: val => (val.score = 101),
-      success: res => {
-        console.log(res);
-      }
-    });
+    // student_db.update_by_primaryKey({
+    //   tableName: "grade",
+    //   target: 1,
+    //   handle: val => (val.score = 101),
+    //   success: res => {
+    //     console.log(res);
+    //   }
+    // });
   },
   err => {
     console.log(err);
